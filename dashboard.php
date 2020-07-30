@@ -33,13 +33,38 @@ if(isset($_SESSION["user_name"]) && $_SESSION["user_name"]!=""){
 <?php
 require ("functions.php");
 $con = dbConnect();
-	
-$result = mysqli_query($con, "SELECT * FROM `place`") or die("Failed to query dtabase".mysqli_error($con));
 
 
+$where="";
+
+if(isset($_REQUEST['pname']) && $_REQUEST['pname']!=""){
+	$where = $where . " AND`name` = '$_REQUEST[pname]'";	
+	$result = mysqli_query($con,"SELECT * FROM `place` where 1=1 $where")or die("Failed to query dtabase".mysqli_error($con));;
+}else{
+	$result = mysqli_query($con, "SELECT * FROM `place`") or die("Failed to query dtabase".mysqli_error($con));
+}
+
+
+// while($res = mysqli_fetch_assoc($result)){
+// 	echo $res['name'];
+// 	echo $res['type'];
+// 	echo $res['location'];
+// }
 
 ?>
-<?php while($row =mysqli_fetch_assoc($result)) {
+
+<!-- search box for filter -->
+<form class="search" action="dashboard.php" style="margin:auto;max-width:300px">
+
+<input type="text" placeholder="Search by place..." name="pname"autocomplete="off"><br>
+
+<input type="submit" value="search">
+</form>
+<!-- end search box for filter -->
+
+
+
+<?php while($row =mysqli_fetch_assoc($result)){
 ?>
 <div class = "card col-md-4 mt-4 mr-4" style="width:18rem; float:left">
 	<img class="card-img-top" src="data:image/jpg;charset=utf8;base64,<?php echo base64_encode($row['image']); ?>" alt="image caption">
